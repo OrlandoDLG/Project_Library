@@ -40,9 +40,10 @@ post "/register" do
 	fname = params[:fname]
 	lname = params[:lname]
 	phone_number = params[:phone_number]
+
 	u = User.new
 	u.email = email.downcase
-	u.password =  password
+	u.password = password
 	u.fname = fname
 	u.lname = lname
 	u.phone_number = phone_number

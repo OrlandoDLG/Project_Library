@@ -30,7 +30,7 @@ class Book
     property :id, Serial
     property :title, Text
     property :edition, Text
-    property :author, Integer
+    property :author, Text
     property :isbn, Text
     property :description, Text
     property :checked_out, Boolean
@@ -95,4 +95,3 @@ User.auto_upgrade!
 Book.auto_upgrade!
 Customer.auto_upgrade!
 Check_Out.auto_upgrade!
-
