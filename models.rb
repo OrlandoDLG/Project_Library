@@ -40,6 +40,10 @@ class Book
         return Check_Out.first(book_id: id, returned: false)
     end
 
+    def current_check_in
+        return Check_Out.first(book_id: id, returned: true)
+    end
+
     def currently_checked_out?
         co = Check_Out.first(book_id: id, returned: false)
         return !co.nil?
@@ -70,7 +74,7 @@ class Check_Out
     property :book_id, Integer
     property :due_date, Text
     property :returned, Boolean
-    property :checked_out_date, Boolean
+    property :checked_out_date, Text
     property :created_at, DateTime
 
     def customer

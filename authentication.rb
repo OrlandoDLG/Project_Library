@@ -37,10 +37,16 @@ end
 post "/register" do
 	email = params[:email]
 	password = params[:password]
-
+	fname = params[:fname]
+	lname = params[:lname]
+	phone_number = params[:phone_number]
 	u = User.new
 	u.email = email.downcase
 	u.password =  password
+	u.fname = fname
+	u.lname = lname
+	u.phone_number = phone_number
+	u.role_id = 0
 	u.save
 
 	session[:user_id] = u.id

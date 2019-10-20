@@ -1,7 +1,7 @@
 require 'jwt'
 require "json"
 
-SECRET_KEY = "lasjdflajsdlfkjasldkfjalksdjflk"
+SECRET_KEY = "lasjdflajsdlfkjasldkfjalksdjflkl"
 
 def api_authenticate!
 	@api = true

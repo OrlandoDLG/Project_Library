@@ -38,8 +38,32 @@ get "/users/:id" do
 end
 
 patch "/users/:id" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	if params["id"]
+		us = User.get(params["id"])
+	    temp_email = params["email"]
+	    temp_password = params["password"]
+	    temp_role_id = params["role_id"]
+	    temp_fname = params["fname"]
+	    temp_lname = params["lname"]
+	    temp_phone_number = params["phone_number"]
+
+	 	if !us.nil?
+	 		us.email = temp_email if !temp_email.nil?
+	 		us.password = temp_password if !temp_password.nil?
+	 		us.role_id = temp_role_id if !temp_role_id.nil?
+	 		us.fname = temp_fname if !temp_fname.nil?
+	 		us.lname = temp_lname if !temp_lname.nil?
+	 		us.phone_number = temp_phone_number if !temp_phone_number.nil?
+	 		us.save
+	 		halt 200, {message: "User Update"}.to_json
+		else
+			halt 404, {message: "You did not select any field"}.to_json
+			redirect "/users/:id"
+	 	end
+	else
+		message = "Invalid User ID"
+	    halt 401, {"message": message}.to_json
+	end 
 end
 
 delete "/users/:id" do
@@ -55,7 +79,12 @@ end
 
 #BOOKS STUFF////////////////////////////////////////
 post "/books" do
-	#halt 200, Book.all.to_json
+
+
+
+	session[:user_id] = u.id
+
+	erb :"authentication/successful_signup"
 	halt 200, {message: "Not implemented"}.to_json
 end
 
