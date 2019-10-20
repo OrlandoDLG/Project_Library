@@ -21,7 +21,7 @@ get "/dashboard" do
 	erb :dashboard
 end
 
-#USER STUFF////////////////////////////
+#USER STUFF////////////////////////////////////////////////////////////
 get "/users" do
 	halt 200, User.all.to_json(except: [:password])
 end
@@ -60,7 +60,7 @@ patch "/users/:id" do
 			redirect "/users/:id"
 	 	end
 	else
-		message = "Invalid User ID"
+		message = "Invalid User Inout"
 	    halt 401, {"message": message}.to_json
 	end 
 end
@@ -76,7 +76,7 @@ delete "/users/:id" do
 	end
 end
 
-#BOOKS STUFF////////////////////////////////////////
+#BOOKS STUFF//////////////////////////////////////////////////////
 post "/books" do
 	# create a new book entry
 	title = params[:title]
@@ -86,7 +86,7 @@ post "/books" do
 	description = params[:description]
 
 	b = Book.new
-	b.title = title.downcase
+	b.title = title
 	b.edition = edition
 	b.author = author
 	b.isbn = isbn
@@ -100,12 +100,12 @@ get "/books" do
 end
 
 get "/books/check_out" do
-	#get all books checked out that have not been returned
+	#get all books checked out that have been checked out
 	#make an empty array of books
 	#loop through checkouts and add each book to the array
 	#return the array as json
 	books = []
-	checkouts = Check_Out.all(returned: false)
+	checkouts = Books.all(checked_out: true)
 	checkouts.each do |c|
 		books << c.book
 	end
@@ -113,12 +113,13 @@ get "/books/check_out" do
 end
 
 get "/books/check_in" do
-	#get all books checked in (available) that have been returned
+	#get all books checked in (available) 
 	#make an empty array of books
-	#loop through checkouts and add each book to the array
+	#loop through books, add each book to the array
 	#return the array as json
 	books = []
-	checkouts = Check_Out.all(returned: true)
+	#checked_out is part of the book class
+	checkouts = Books.all(checked_out: false)
 	checkouts.each do |c|
 		books << c.book
 	end
@@ -159,7 +160,7 @@ patch "/books/:id" do
 			redirect "/books/:id"
 	 	end
 	else
-		message = "Invalid Input"
+		message = "Invalid Book Input"
 	    halt 401, {"message": message}.to_json
 	end 
 end
@@ -169,16 +170,24 @@ delete "/books/:id" do
 	b = Book.get(id)
 	if b != nil
 		b.destroy
-		halt 200, {message: "User deleted"}.to_json
+		halt 200, {message: "Book deleted"}.to_json
 	else
-		halt 404, {message: "User not found"}.to_json
+		halt 404, {message: "Book not found"}.to_json
 	end
 end
 
-#CUSTOMERS STUFF////////////////////////////
+#CUSTOMERS STUFF//////////////////////////////////////////////////////////////
 post "/customers" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	# create a new customer entry
+	fname = params[:fname]
+	lname = params[:lname]
+	phone_number = params[:phone_number]
+
+	c = Book.new
+	c.fname = fname
+	c.lname = lname
+	c.phone_number = phone_number
+	c.save
 end
 
 get "/customers" do
@@ -186,38 +195,95 @@ get "/customers" do
 end
 
 get "/customers/:id" do
-	# id = params["id"]
-	# b = Book.get(id)
-	# if b != nil
-	# 	halt 200, b.to_json
-	# else
-	# 	halt 404, {message: "Book not found"}.to_json
-	# end
+	id = params["id"]
+	c = Customer.get(id)
+	if c != nil
+		halt 200, c.to_json
+	else
+		halt 404, {message: "Book not found"}.to_json
+	end
 end
 
 patch "/customers/:id" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	if params["id"]
+		cu = Customer.get(params["id"])
+	    temp_fname = params["fname"]
+	    temp_lname = params["lname"]
+	    temp_phone_number = params["phone_number"]
+
+	 	if !cu.nil?
+	 		cu.fname = temp_fname if !temp_fname.nil?
+	 		cu.lname = temp_lname if !temp_lname.nil?
+	 		cu.phone_number = temp_phone_number if !temp_phone_number.nil?
+	 		cu.save
+
+	 		halt 200, {message: "Customer Updated"}.to_json
+		else
+			halt 404, {message: "You did not select any field"}.to_json
+			redirect "/customers/:id"
+	 	end
+	else
+		message = "Invalid Customer Input"
+	    halt 401, {"message": message}.to_json
+	end 
 end
 
 delete "/customers/:id" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	id = params["id"]
+	c = Book.get(id)
+	if c != nil
+		c.destroy
+		halt 200, {message: "Customer deleted"}.to_json
+	else
+		halt 404, {message: "Customer not found"}.to_json
+	end
 end
 
-#CHECK_OUT STUFF////////////////////////////
+#CHECK_OUT STUFF//////////////////////////////////////////////////
 post "/check_outs" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	# create a new customer entry
+	customer_id = params[:customer_id].to_i
+	book_id = params[:book_id].to_i
+	due_date = params[:due_date]
+	checked_out_date = params[:checked_out_date]
+
+	ch = Check_Out.new
+	ch.customer_id = customer_id
+	ch.book_id = book_id
+	ch.due_date = due_date
+	ch.checked_out_date = checked_out_date
+	ch.returned = false
+	ch.save
 end
 
 get "/check_outs" do
 	halt 200, Check_Out.all.to_json
 end
 
+get "/check_outs/:id"  do
+	id = params["id"]
+	ch = Book.get(id)
+	if ch != nil
+		halt 200, ch.to_json
+	else
+		halt 404, {message: "Book not found"}.to_json
+	end
+end
+
 get "/check_outs/not_returned" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	#get all books checked out that have not been returned
+	#make an empty array of books
+	#loop through checkouts and add each book to the array
+	#return the array as json
+	books = []
+	#ASK line below, due to class model
+	#Could Check_Out.all(returned: false) change to unreturned_check_outs??? 
+	#unreturned_check_out returns the id 
+	checkouts = Check_Out.all(returned: false)
+	checkouts.each do |c|
+		books << c.book
+	end
+	halt 200, books.to_json
 end
 
 get "/check_outs/:id_c/:id_b"  do#       :id" do #ASK??
@@ -231,11 +297,40 @@ get "/check_outs/:id_c/:id_b"  do#       :id" do #ASK??
 end
 
 patch "/check_outs/:id" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	if params["id"]
+		ch = Check_Out.get(params["id"])
+	    temp_customer_id = params["customer_id"]
+	    temp_book_id = params["book_id"]
+	    temp_due_date = params["due_date"]
+	    temp_checked_out_date = params["checked_out_date"]
+
+	 	if !ch.nil?
+	 		ch.customer_id = temp_customer_id if !temp_customer_id.nil?
+	 		ch.book_id = temp_book_id if !temp_book_id.nil?
+	 		ch.due_date = temp_due_date if !temp_due_date.nil?
+	 		ch.checked_out_date = temp_checked_out_date if !temp_checked_out_date.nil?
+	 		#Correct this to CHECK for SOMETHING
+	 		ch.returned = true
+	 		ch.save
+
+	 		halt 200, {message: "Check Out Entry Updated"}.to_json
+		else
+			halt 404, {message: "You did not select any field"}.to_json
+			redirect "/check_outs/:id"
+	 	end
+	else
+		message = "Invalid Customer Input"
+	    halt 401, {"message": message}.to_json
+	end 
 end
 
 delete "/check_outs/:id" do
-	#halt 200, Book.all.to_json
-	halt 200, {message: "Not implemented"}.to_json
+	id = params["id"]
+	ch = Book.get(id)
+	if ch != nil
+		ch.destroy
+		halt 200, {message: "Check Out Entry deleted"}.to_json
+	else
+		halt 404, {message: "Check Out Entry not found"}.to_json
+	end
 end
