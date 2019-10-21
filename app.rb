@@ -41,17 +41,7 @@ patch "/users/:id" do
 		us = User.get(params["id"])
 	    temp_email = params["email"]
 	    temp_password = params["password"]
-	    #ASK
-	    #Due to the way that params reads entries
-	    #must check for specific entries in order 
-	    #make sure that params.to_i does not make 
-	    #an empty entry a 0 value
-	    #Currently only has 0 and 1 type users
-	    if params["role_id"] == "0" || params["role_id"] == "1"
-	    	temp_role_id = params["role_id"].to_i
-	    else
-	    	temp_role_id = us.role_id
-	    end 
+	    temp_role_id = params["role_id"]
 	    temp_fname = params["fname"]
 	    temp_lname = params["lname"]
 	    temp_phone_number = params["phone_number"]
@@ -59,7 +49,9 @@ patch "/users/:id" do
 	 	if !us.nil?
 	 		us.email = temp_email if !temp_email.nil?
 	 		us.password = temp_password if !temp_password.nil?
-	 		us.role_id = temp_role_id if !temp_role_id.nil?
+	 		#Only change to integer here to avoid changing null 
+	 		#to 0 integer
+	 		us.role_id = temp_role_id.to_i if !temp_role_id.nil?
 	 		us.fname = temp_fname if !temp_fname.nil?
 	 		us.lname = temp_lname if !temp_lname.nil?
 	 		us.phone_number = temp_phone_number if !temp_phone_number.nil?
@@ -74,7 +66,7 @@ patch "/users/:id" do
 	    halt 401, {"message": message}.to_json
 	end 
 end
-
+###TODO, TESTING ENDED HERE
 delete "/users/:id" do
 	id = params["id"]
 	u = User.get(id)
