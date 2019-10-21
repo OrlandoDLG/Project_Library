@@ -66,7 +66,7 @@ patch "/users/:id" do
 	    halt 401, {"message": message}.to_json
 	end 
 end
-###TODO, TESTING ENDED HERE
+
 delete "/users/:id" do
 	id = params["id"]
 	u = User.get(id)
@@ -109,9 +109,9 @@ get "/books/check_out" do
 	#loop through checkouts and add each book to the array
 	#return the array as json
 	books = []
-	checkouts = Books.all(checked_out: true)
+	checkouts = Book.all(checked_out: true)
 	checkouts.each do |c|
-		books << c.book
+		books << c
 	end
 	halt 200, books.to_json
 end
@@ -123,9 +123,9 @@ get "/books/check_in" do
 	#return the array as json
 	books = []
 	#checked_out is part of the book class
-	checkouts = Books.all(checked_out: false)
+	checkouts = Book.all(checked_out: false)
 	checkouts.each do |c|
-		books << c.book
+		books << c
 	end
 	halt 200, books.to_json
 end
@@ -181,6 +181,7 @@ delete "/books/:id" do
 end
 
 #CUSTOMERS STUFF//////////////////////////////////////////////////////////////
+###TODO, TESTING ENDED HERE
 post "/customers" do
 	# create a new customer entry
 	fname = params[:fname]
