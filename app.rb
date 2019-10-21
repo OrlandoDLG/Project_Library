@@ -41,7 +41,17 @@ patch "/users/:id" do
 		us = User.get(params["id"])
 	    temp_email = params["email"]
 	    temp_password = params["password"]
-	    temp_role_id = params["role_id"]
+	    #ASK
+	    #Due to the way that params reads entries
+	    #must check for specific entries in order 
+	    #make sure that params.to_i does not make 
+	    #an empty entry a 0 value
+	    #Currently only has 0 and 1 type users
+	    if params["role_id"] == "0" || params["role_id"] == "1"
+	    	temp_role_id = params["role_id"].to_i
+	    else
+	    	temp_role_id = us.role_id
+	    end 
 	    temp_fname = params["fname"]
 	    temp_lname = params["lname"]
 	    temp_phone_number = params["phone_number"]
@@ -54,13 +64,13 @@ patch "/users/:id" do
 	 		us.lname = temp_lname if !temp_lname.nil?
 	 		us.phone_number = temp_phone_number if !temp_phone_number.nil?
 	 		us.save
-	 		halt 200, {message: "User Update"}.to_json
+	 		halt 200, {message: "User Updated"}.to_json
 		else
 			halt 404, {message: "You did not select any field"}.to_json
 			redirect "/users/:id"
 	 	end
 	else
-		message = "Invalid User Inout"
+		message = "Invalid User Input"
 	    halt 401, {"message": message}.to_json
 	end 
 end
@@ -93,6 +103,8 @@ post "/books" do
 	b.description = description
 	b.checked_out = false
 	b.save
+
+	halt 200, {message: "Book Created"}.to_json
 end
 
 get "/books" do
@@ -151,7 +163,7 @@ patch "/books/:id" do
 	 		bo.author = temp_author if !temp_author.nil?
 	 		bo.isbn = temp_isbn if !temp_isbn.nil?
 	 		bo.description = temp_description if !temp_description.nil?
-	 		#FIX THis to check for something later
+	 		#TODO FIX THis to check for something later
 	 		bo.checked_out = true 
 	 		bo.save
 	 		halt 200, {message: "Book Updated"}.to_json
@@ -188,6 +200,8 @@ post "/customers" do
 	c.lname = lname
 	c.phone_number = phone_number
 	c.save
+
+	halt 200, {message: "Customer Created"}.to_json
 end
 
 get "/customers" do
@@ -254,6 +268,8 @@ post "/check_outs" do
 	ch.checked_out_date = checked_out_date
 	ch.returned = false
 	ch.save
+
+	halt 200, {message: "Check Out Entry Created"}.to_json
 end
 
 get "/check_outs" do
@@ -286,14 +302,20 @@ get "/check_outs/not_returned" do
 	halt 200, books.to_json
 end
 
-get "/check_outs/:id_c/:id_b"  do#       :id" do #ASK??
-	# id = params["id"]
-	# b = Book.get(id)
-	# if b != nil
-	# 	halt 200, b.to_json
-	# else
-	# 	halt 404, {message: "Book not found"}.to_json
-	# end
+#ASK or test if this function is working
+#Gets specific customer and specific book
+get "/check_outs/:id_c/:id_b"  do
+	id_c = params["id_c"]
+	id_c = Customer.get(id_c)
+
+	id_b = params["id_b"]
+	id_b = Book.get(id_b)
+
+	if id_c && id_b != nil
+		halt 200, id_c.to_json + id_b.to_json
+	else
+		halt 404, {message: "User with book not found"}.to_json
+	end
 end
 
 patch "/check_outs/:id" do
@@ -309,7 +331,7 @@ patch "/check_outs/:id" do
 	 		ch.book_id = temp_book_id if !temp_book_id.nil?
 	 		ch.due_date = temp_due_date if !temp_due_date.nil?
 	 		ch.checked_out_date = temp_checked_out_date if !temp_checked_out_date.nil?
-	 		#Correct this to CHECK for SOMETHING
+	 		#TODO FIX this to CHECK for SOMETHING
 	 		ch.returned = true
 	 		ch.save
 

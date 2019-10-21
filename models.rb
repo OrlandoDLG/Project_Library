@@ -55,7 +55,7 @@ class Customer
     property :id, Serial
     property :fname, Text
     property :lname, Text
-    property :phone_number, Integer
+    property :phone_number, Text
     property :created_at, DateTime
 
     def check_outs
