@@ -181,14 +181,13 @@ delete "/books/:id" do
 end
 
 #CUSTOMERS STUFF//////////////////////////////////////////////////////////////
-###TODO, TESTING ENDED HERE
 post "/customers" do
 	# create a new customer entry
 	fname = params[:fname]
 	lname = params[:lname]
 	phone_number = params[:phone_number]
 
-	c = Book.new
+	c = Customer.new
 	c.fname = fname
 	c.lname = lname
 	c.phone_number = phone_number
@@ -237,7 +236,7 @@ end
 
 delete "/customers/:id" do
 	id = params["id"]
-	c = Book.get(id)
+	c = Customer.get(id)
 	if c != nil
 		c.destroy
 		halt 200, {message: "Customer deleted"}.to_json
@@ -271,15 +270,16 @@ end
 
 get "/check_outs/:id"  do
 	id = params["id"]
-	ch = Book.get(id)
+	ch = Check_Out.get(id)
 	if ch != nil
 		halt 200, ch.to_json
 	else
-		halt 404, {message: "Book not found"}.to_json
+		halt 404, {message: "Check Out Entry not found"}.to_json
 	end
 end
-
-get "/check_outs/not_returned" do
+###TODO ASK #BUG, FIGURE THIS ONE OUT
+#This does not like check_outs/anyword, MAYBE POST man issue?
+get "/check_outs_unreturned" do
 	#get all books checked out that have not been returned
 	#make an empty array of books
 	#loop through checkouts and add each book to the array
@@ -292,10 +292,10 @@ get "/check_outs/not_returned" do
 	checkouts.each do |c|
 		books << c.book
 	end
+
 	halt 200, books.to_json
 end
 
-#ASK or test if this function is working
 #Gets specific customer and specific book
 get "/check_outs/:id_c/:id_b"  do
 	id_c = params["id_c"]
@@ -341,7 +341,7 @@ end
 
 delete "/check_outs/:id" do
 	id = params["id"]
-	ch = Book.get(id)
+	ch = Check_Out.get(id)
 	if ch != nil
 		ch.destroy
 		halt 200, {message: "Check Out Entry deleted"}.to_json
