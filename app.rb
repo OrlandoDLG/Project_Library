@@ -268,18 +268,9 @@ get "/check_outs" do
 	halt 200, Check_Out.all.to_json
 end
 
-get "/check_outs/:id"  do
-	id = params["id"]
-	ch = Check_Out.get(id)
-	if ch != nil
-		halt 200, ch.to_json
-	else
-		halt 404, {message: "Check Out Entry not found"}.to_json
-	end
-end
-###TODO ASK #BUG, FIGURE THIS ONE OUT
-#This does not like check_outs/anyword, MAYBE POST man issue?
-get "/check_outs_unreturned" do
+##TODO ASK, bring up #BUG, Get requests with /:id must be last 
+#after any get request with same intro sample /check_outs/:id
+get "/check_outs/not_returned" do
 	#get all books checked out that have not been returned
 	#make an empty array of books
 	#loop through checkouts and add each book to the array
@@ -294,6 +285,16 @@ get "/check_outs_unreturned" do
 	end
 
 	halt 200, books.to_json
+end
+
+get "/check_outs/:id"  do
+	id = params["id"]
+	ch = Check_Out.get(id)
+	if ch != nil
+		halt 200, ch.to_json
+	else
+		halt 404, {message: "Check Out Entry not found"}.to_json
+	end
 end
 
 #Gets specific customer and specific book
