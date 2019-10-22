@@ -15,7 +15,6 @@ get "/" do
 	erb :index
 end
 
-
 get "/dashboard" do
 	authenticate!
 	erb :dashboard
@@ -155,7 +154,7 @@ patch "/books/:id" do
 	 		bo.author = temp_author if !temp_author.nil?
 	 		bo.isbn = temp_isbn if !temp_isbn.nil?
 	 		bo.description = temp_description if !temp_description.nil?
-	 		#TODO FIX THis to check for something later
+	 		#TODO ASK, FIX THis to check for something later
 	 		bo.checked_out = true 
 	 		bo.save
 	 		halt 200, {message: "Book Updated"}.to_json
@@ -268,8 +267,9 @@ get "/check_outs" do
 	halt 200, Check_Out.all.to_json
 end
 
-##TODO ASK, bring up #BUG, Get requests with /:id must be last 
+##TODO ASK, bring up BUG, Get requests with /:id must be last 
 #after any get request with same intro sample /check_outs/:id
+#Order of the functions matter
 get "/check_outs/not_returned" do
 	#get all books checked out that have not been returned
 	#make an empty array of books
@@ -312,6 +312,7 @@ get "/check_outs/:id_c/:id_b"  do
 	end
 end
 
+#Updates the check out entry
 patch "/check_outs/:id" do
 	if params["id"]
 		ch = Check_Out.get(params["id"])
@@ -325,7 +326,7 @@ patch "/check_outs/:id" do
 	 		ch.book_id = temp_book_id if !temp_book_id.nil?
 	 		ch.due_date = temp_due_date if !temp_due_date.nil?
 	 		ch.checked_out_date = temp_checked_out_date if !temp_checked_out_date.nil?
-	 		#TODO FIX this to CHECK for SOMETHING
+	 		#TODO ASK, FIX this to CHECK for SOMETHING
 	 		ch.returned = true
 	 		ch.save
 
