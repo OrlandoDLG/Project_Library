@@ -30,5 +30,8 @@ RSpec.configure do |c|
 	DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/app_test.db")
   DataMapper.finalize
   User.auto_migrate!
+  Book.auto_migrate!
+  Customer.auto_migrate!
+  Check_Out.auto_migrate!
 
 end

@@ -95,7 +95,7 @@ post "/books" do
 	b.checked_out = false
 	b.save
 
-	halt 200, {message: "Book Created"}.to_json
+	halt 201, {message: "Book Created"}.to_json
 end
 
 get "/books" do
@@ -154,13 +154,12 @@ patch "/books/:id" do
 	 		bo.author = temp_author if !temp_author.nil?
 	 		bo.isbn = temp_isbn if !temp_isbn.nil?
 	 		bo.description = temp_description if !temp_description.nil?
-	 		#TODO ASK, FIX THis to check for something later
+	 		#TODO, FIX THis to check for something later
 	 		bo.checked_out = true 
 	 		bo.save
 	 		halt 200, {message: "Book Updated"}.to_json
 		else
 			halt 404, {message: "You did not select any field"}.to_json
-			redirect "/books/:id"
 	 	end
 	else
 		message = "Invalid Book Input"
@@ -192,7 +191,7 @@ post "/customers" do
 	c.phone_number = phone_number
 	c.save
 
-	halt 200, {message: "Customer Created"}.to_json
+	halt 201, {message: "Customer Created"}.to_json
 end
 
 get "/customers" do
@@ -225,7 +224,6 @@ patch "/customers/:id" do
 	 		halt 200, {message: "Customer Updated"}.to_json
 		else
 			halt 404, {message: "You did not select any field"}.to_json
-			redirect "/customers/:id"
 	 	end
 	else
 		message = "Invalid Customer Input"
@@ -260,14 +258,13 @@ post "/check_outs" do
 	ch.returned = false
 	ch.save
 
-	halt 200, {message: "Check Out Entry Created"}.to_json
+	halt 201, {message: "Check Out Entry Created"}.to_json
 end
 
 get "/check_outs" do
 	halt 200, Check_Out.all.to_json
 end
 
-##TODO ASK, bring up BUG, Get requests with /:id must be last 
 #after any get request with same intro sample /check_outs/:id
 #Order of the functions matter
 get "/check_outs/not_returned" do
@@ -276,8 +273,6 @@ get "/check_outs/not_returned" do
 	#loop through checkouts and add each book to the array
 	#return the array as json
 	books = []
-	#ASK line below, due to class model
-	#Could Check_Out.all(returned: false) change to unreturned_check_outs??? 
 	#unreturned_check_out returns the id 
 	checkouts = Check_Out.all(returned: false)
 	checkouts.each do |c|
@@ -326,14 +321,13 @@ patch "/check_outs/:id" do
 	 		ch.book_id = temp_book_id if !temp_book_id.nil?
 	 		ch.due_date = temp_due_date if !temp_due_date.nil?
 	 		ch.checked_out_date = temp_checked_out_date if !temp_checked_out_date.nil?
-	 		#TODO ASK, FIX this to CHECK for SOMETHING
+	 		#TODO, FIX this to CHECK for SOMETHING
 	 		ch.returned = true
 	 		ch.save
 
 	 		halt 200, {message: "Check Out Entry Updated"}.to_json
 		else
 			halt 404, {message: "You did not select any field"}.to_json
-			redirect "/check_outs/:id"
 	 	end
 	else
 		message = "Invalid Customer Input"

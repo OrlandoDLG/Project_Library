@@ -68,6 +68,10 @@ end
 post "/api/register" do
 	username = params["username"]
 	password = params["password"]
+	fname = params["fname"]
+	lname = params["lname"]
+	phone_number = params["phone_number"]
+
 	if username && password
 		user = User.first(email: username.downcase)
 
@@ -77,6 +81,9 @@ post "/api/register" do
 				u = User.new
 				u.email = username.downcase
 				u.password = password
+				u.fname = fname
+				u.lname = lname
+				u.phone_number = phone_number
 				u.save
 				halt 201, {"message": "Account successfully registered"}.to_json
 		end
