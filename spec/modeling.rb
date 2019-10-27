@@ -120,8 +120,38 @@ describe "When not signed in, API" do
     post "/api/register?username=billy"
     has_status_bad_request
   end
-end
+#Orlando Tests Start
 
+  it "should allow updates to all fields of the user" do
+    patch "/users/1?username=p3@p3.com&password=bob3&role_id=1&fname=fify&lname=lily&phone_number=0192"
+    u = User.get("1")
+    expect(u.fname).to eq("fify")
+    expect(u.lname).to eq("lily")
+    has_status_200	
+  end
+
+  it "should allow updates to one field of the user, and leave other fields as is" do
+    patch "/users/1?fname=billy"
+    u = User.get("1")
+    expect(u.fname).to eq("billy")
+    expect(u.lname).to eq("lily")
+    has_status_200	
+  end
+
+  it "should allow deleting a user" do
+    delete "/users/1"
+    u = User.get("1")
+    has_status_200	
+  end
+
+  it "should not allow duplicate deletions" do
+    delete "/users/1"
+    u = User.get("1")
+    has_status_404	
+  end
+
+end
+#TODO Left Off here
 #Book TESTS//////////////////////////////////////////////////////////////
 describe Book do
   it { should have_property           :id }
@@ -143,13 +173,13 @@ describe "Book Testing" do
   	@b.description = "de1"
   	@b.save
 
-  	@b = Book.new
-  	@b.title = "b2"
-  	@b.edition = "first"
-  	@b.author = "au2"
-  	@b.isbn = "qwe123"
-  	@b.description = "de2"
-  	@b.save
+  	@b2 = Book.new
+  	@b2.title = "b2"
+  	@b2.edition = "first"
+  	@b2.author = "au2"
+  	@b2.isbn = "qwe123"
+  	@b2.description = "de2"
+  	@b2.save
   end
 
   it "should have two books in test database" do 
@@ -165,6 +195,27 @@ describe Customer do
   it { should have_property           :phone_number }
 end
 
+describe "Customer Testing" do
+  before(:all) do 
+  	@c = Customer.new
+  	@c.fname = "cf1"
+  	@c.lname = "cl1"
+  	@c.phone_number = "1234"
+  	@c.save
+
+  	@c2 = Customer.new
+  	@c2.fname = "cf2"
+  	@c2.lname = "cl2"
+  	@c2.phone_number = "5678"
+  	@c2.save
+  end
+
+  it "should have two Customers in test database" do 
+  	expect(Customer.all.count).to eq(2)
+  end
+
+end
+
 #Check_Out TESTS//////////////////////////////////////////////////////////////
 describe Check_Out do
   it { should have_property           :id }
@@ -175,3 +226,25 @@ describe Check_Out do
   it { should have_property           :checked_out_date }
 end
 
+describe "Check Out Testing" do
+  before(:all) do 
+  	@ch = Check_Out.new
+  	@ch.customer_id = 1
+  	@ch.book_id = 1
+  	@ch.due_date = "later1"
+  	@ch.checked_out_date = "now1"
+  	@ch.save
+
+  	@ch2 = Check_Out.new
+  	@ch2.customer_id = 2
+  	@ch2.book_id = 2
+  	@ch2.due_date = "later2"
+  	@ch2.checked_out_date = "now2"
+  	@ch2.save
+  end
+
+  it "should have two Check Out Entries in test database" do 
+  	expect(Check_Out.all.count).to eq(2)
+  end
+
+end

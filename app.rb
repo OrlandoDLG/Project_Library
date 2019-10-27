@@ -147,6 +147,7 @@ patch "/books/:id" do
 	    temp_author = params["author"]
 	    temp_isbn = params["isbn"]
 	    temp_description = params["description"]
+	    temp_checked_out = params["checked_out"]
 
 	 	if !bo.nil?
 	 		bo.title = temp_title if !temp_title.nil?
@@ -154,8 +155,7 @@ patch "/books/:id" do
 	 		bo.author = temp_author if !temp_author.nil?
 	 		bo.isbn = temp_isbn if !temp_isbn.nil?
 	 		bo.description = temp_description if !temp_description.nil?
-	 		#TODO, FIX THis to check for something later
-	 		bo.checked_out = true 
+			bo.checked_out = temp_checked_out if !checked_out.nil?
 	 		bo.save
 	 		halt 200, {message: "Book Updated"}.to_json
 		else
@@ -315,14 +315,14 @@ patch "/check_outs/:id" do
 	    temp_book_id = params["book_id"]
 	    temp_due_date = params["due_date"]
 	    temp_checked_out_date = params["checked_out_date"]
+	    temp_returned = params["returned"]
 
 	 	if !ch.nil?
-	 		ch.customer_id = temp_customer_id if !temp_customer_id.nil?
-	 		ch.book_id = temp_book_id if !temp_book_id.nil?
+	 		ch.customer_id = temp_customer_id.to_i if !temp_customer_id.nil?
+	 		ch.book_id = temp_book_id.to_i if !temp_book_id.nil?
 	 		ch.due_date = temp_due_date if !temp_due_date.nil?
 	 		ch.checked_out_date = temp_checked_out_date if !temp_checked_out_date.nil?
-	 		#TODO, FIX this to CHECK for SOMETHING
-	 		ch.returned = true
+	 		ch.returned = temp_returned if !temp_returned.nil?
 	 		ch.save
 
 	 		halt 200, {message: "Check Out Entry Updated"}.to_json
