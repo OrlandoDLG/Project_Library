@@ -123,10 +123,13 @@ describe "When not signed in, API" do
 #Orlando Tests Start
 
   it "should allow updates to all fields of the user" do
-    patch "/users/1?username=p3@p3.com&password=bob3&role_id=1&fname=fify&lname=lily&phone_number=0192"
+    patch "/users/1?password=bob3&role_id=1&fname=changed&lname=lily&phone_number=0192"
     u = User.get("1")
-    expect(u.fname).to eq("fify")
+    expect(u.password).to eq("bob3")
+    expect(u.role_id).to eq(1)
+    expect(u.fname).to eq("changed")
     expect(u.lname).to eq("lily")
+    expect(u.phone_number).to eq("0192")
     has_status_200	
   end
 
