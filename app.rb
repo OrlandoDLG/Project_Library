@@ -148,14 +148,17 @@ patch "/books/:id" do
 	    temp_isbn = params["isbn"]
 	    temp_description = params["description"]
 	    temp_checked_out = params["checked_out"]
+	   # if temp_checked_out if !checked_out.nil? || temp_description.to_i==1
+
+	    #end
 
 	 	if !bo.nil?
 	 		bo.title = temp_title if !temp_title.nil?
 	 		bo.edition = temp_edition if !temp_edition.nil?
 	 		bo.author = temp_author if !temp_author.nil?
 	 		bo.isbn = temp_isbn if !temp_isbn.nil?
-	 		bo.description = temp_description if !temp_description.nil?
-			bo.checked_out = temp_checked_out if !checked_out.nil?
+	 		bo.description = temp_description if !temp_description.nil? 
+			bo.checked_out = temp_checked_out if !temp_checked_out.nil?
 	 		bo.save
 	 		halt 200, {message: "Book Updated"}.to_json
 		else

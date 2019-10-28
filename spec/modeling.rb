@@ -143,18 +143,15 @@ describe "When not signed in, API" do
 
   it "should allow deleting a user" do
     delete "/users/1"
-    u = User.get("1")
     has_status_200	
   end
 
   it "should not allow duplicate deletions" do
     delete "/users/1"
-    u = User.get("1")
     has_status_404	
   end
 
 end
-#TODO Left Off here
 #Book TESTS//////////////////////////////////////////////////////////////
 describe Book do
   it { should have_property           :id }
@@ -189,7 +186,83 @@ describe "Book Testing" do
   	expect(Book.all.count).to eq(2)
   end
 
+  it "should allow creating a new book" do
+    post "/books?title=b3&edition=first&author=au3&isbn=asdkhj&description=trythree"
+    has_status_created
+    b = Book.last
+    expect(b.title).to eq("b3")
+    expect(b.edition).to eq("first")
+    expect(b.author).to eq("au3")
+    expect(b.isbn).to eq("asdkhj")
+    expect(b.description).to eq("trythree")
+  end
+
+  it "should access all the books" do
+    get "/books"
+    has_status_200	
+  end
+
+  it "should access all checked in book books" do
+    get "/books/check_in"
+    has_status_200
+    b = Book.get("3")
+    expect(b.checked_out).to eq(false)	
+  end
+
+  it "should access a specific book the books" do
+    get "/books/3"
+    has_status_200
+    b = Book.get("3")
+    expect(b.title).to eq("b3")
+    expect(b.edition).to eq("first")
+    expect(b.author).to eq("au3")
+    expect(b.isbn).to eq("asdkhj")
+    expect(b.description).to eq("trythree")	
+  end
+
+  it "should not access a book that doesn't exist" do
+    get "/books/10"
+    has_status_404	
+  end
+
+  it "should allow updates to all fields of the book" do
+    patch "/books/3?title=b4&edition=first&author=au4&isbn=changed&description=changed&checked_out=1"
+    b = Book.get("3")
+    expect(b.title).to eq("b4")
+    expect(b.edition).to eq("first")
+    expect(b.author).to eq("au4")
+    expect(b.isbn).to eq("changed")
+    expect(b.description).to eq("changed")
+    expect(b.checked_out).to eq(true)		
+    has_status_200	
+  end
+
+  it "should access all checked out book books" do
+    get "/books/check_out"
+    has_status_200
+    b = Book.get("3")
+    expect(b.checked_out).to eq(true)	
+  end
+
+  it "should allow updates to one field of the book, and leave other fields as is" do
+    patch "/books/3?title=newtitle"
+    b = Book.get("3")
+    expect(b.title).to eq("newtitle")
+    expect(b.edition).to eq("first")
+    has_status_200	
+  end
+
+  it "should allow deleting a user" do
+    delete "/books/3"
+    has_status_200	
+  end
+
+  it "should not allow duplicate deletions" do
+    delete "/books/3"
+    has_status_404	
+  end
 end
+#TODO Left Off here
 #Customer TESTS//////////////////////////////////////////////////////////////
 describe Customer do
   it { should have_property           :id }
