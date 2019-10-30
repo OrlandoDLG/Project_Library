@@ -53,7 +53,6 @@ post "/register" do
 	session[:user_id] = u.id
 
 	erb :"authentication/successful_signup"
-
 end
 
 #This method will return the user object of the currently signed in user
