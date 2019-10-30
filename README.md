@@ -70,7 +70,7 @@ get '/say_hello' do
 end
 ```
 
-
+Run the Tests with: bundle exec rspec spec/modeling.rb
 
 ## Deploying to Heroku
 

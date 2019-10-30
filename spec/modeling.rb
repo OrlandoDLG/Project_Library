@@ -170,7 +170,7 @@ describe "Book Testing" do
   	@b.edition = "first"
   	@b.author = "au1"
   	@b.isbn = "asd123"
-  	@b.description = "de1"
+  	@b.description = "des1"
   	@b.save
 
   	@b2 = Book.new
@@ -178,7 +178,7 @@ describe "Book Testing" do
   	@b2.edition = "first"
   	@b2.author = "au2"
   	@b2.isbn = "qwe123"
-  	@b2.description = "de2"
+  	@b2.description = "des2"
   	@b2.save
   end
 
@@ -290,6 +290,63 @@ describe "Customer Testing" do
   	expect(Customer.all.count).to eq(2)
   end
 
+  it "should allow creating a new Customer" do
+    post "/customers?fname=cf3&lname=cl3&phone_number=0987"
+    has_status_created
+    c = Customer.last
+    expect(c.fname).to eq("cf3")
+    expect(c.lname).to eq("cl3")
+    expect(c.phone_number).to eq("0987")
+  end
+
+  it "should access all the Customers" do
+    get "/customers"
+    has_status_200	
+  end
+
+  it "should access a specific customer" do
+    get "/customers/3"
+    has_status_200
+    c = Customer.get("3")
+    expect(c.fname).to eq("cf3")
+    expect(c.lname).to eq("cl3")
+    expect(c.phone_number).to eq("0987")
+  end
+
+  it "should not access a book that doesn't exist" do
+    get "/customers/10"
+    has_status_404	
+  end
+
+  it "should allow updates to all fields of the book" do
+    patch "/customers/3?fname=fff&lname=lll&phone_number=0000"
+    c = Customer.get("3")
+    expect(c.fname).to eq("fff")
+    expect(c.lname).to eq("lll")
+    expect(c.phone_number).to eq("0000")	
+    has_status_200	
+  end
+
+  it "should allow updates to one field of the book, and leave other fields as is" do
+    patch "/customers/3?fname=newname"
+    c = Customer.get("3")
+    expect(c.fname).to eq("newname")
+    expect(c.lname).to eq("lll")
+    expect(c.phone_number).to eq("0000")	
+    has_status_200	
+  end
+
+  it "should allow deleting a user" do
+    delete "/customers/3"
+    has_status_200	
+  end
+
+  it "should not allow duplicate deletions" do
+    delete "/customers/3"
+    has_status_404	
+  end
+
+
 end
 
 #Check_Out TESTS//////////////////////////////////////////////////////////////
@@ -312,15 +369,101 @@ describe "Check Out Testing" do
   	@ch.save
 
   	@ch2 = Check_Out.new
-  	@ch2.customer_id = 2
-  	@ch2.book_id = 2
+  	@ch2.customer_id = 3
+  	@ch2.book_id = 3
   	@ch2.due_date = "later2"
   	@ch2.checked_out_date = "now2"
   	@ch2.save
+
   end
 
   it "should have two Check Out Entries in test database" do 
   	expect(Check_Out.all.count).to eq(2)
+  end
+
+  it "should allow creating a Check Out Entry of a Customer with a Book" do
+    post "/check_outs?customer_id=2&book_id=1&due_date=later3&checked_out_date=now3"
+    has_status_created
+
+    ch = Check_Out.last
+    expect(ch.customer_id).to eq(2)
+    expect(ch.book_id).to eq(1)
+    expect(ch.due_date).to eq("later3")
+    expect(ch.checked_out_date).to eq("now3")
+    expect(ch.returned).to eq(false)
+
+    c = Customer.get(ch.customer_id)
+    expect(c.fname).to eq("cf2")
+    expect(c.lname).to eq("cl2")
+    expect(c.phone_number).to eq("5678")
+
+    b = Book.get(ch.book_id)
+    expect(b.title).to eq("b1")
+    expect(b.edition).to eq("first")
+    expect(b.author).to eq("au1")
+    expect(b.isbn).to eq("asd123")
+    expect(b.description).to eq("des1")
+    expect(b.checked_out).to eq(true)
+  end
+
+  it "should access all the Check Out Entries" do
+    get "/check_outs"
+    has_status_200	
+  end
+
+  it "should access all checked out books that are not returned" do
+    get "/check_outs/not_returned"
+    has_status_200
+    ch = Check_Out.get("3")
+    expect(ch.returned).to eq(false)
+  end
+
+  it "should access a specific Check Out" do
+    get "/check_outs/3"
+    has_status_200
+    ch = Check_Out.get("3")
+    expect(ch.customer_id).to eq(2)
+    expect(ch.book_id).to eq(1)
+    expect(ch.due_date).to eq("later3")
+    expect(ch.checked_out_date).to eq("now3")
+    expect(ch.returned).to eq(false)	
+  end
+
+  it "should not access a Check Out that doesn't exist" do
+    get "/check_outs/10"
+    has_status_404	
+  end
+
+#ASK for help here, is this the correct logic to manage 
+#customers with check outs?
+  it "should access a specific Customer with specific Book" do
+    get "/check_outs/2/1"
+
+    has_status_200
+    ch = Check_Out.get("3")
+    expect(ch.customer_id).to eq(2)
+    expect(ch.book_id).to eq(1)
+    expect(ch.due_date).to eq("later3")
+    expect(ch.checked_out_date).to eq("now3")
+    expect(ch.returned).to eq(false)
+
+    c = Customer.get(ch.customer_id)
+    expect(c.fname).to eq("cf2")
+    expect(c.lname).to eq("cl2")
+    expect(c.phone_number).to eq("5678")
+
+    b = Book.get(ch.book_id)
+    expect(b.title).to eq("b1")
+    expect(b.edition).to eq("first")
+    expect(b.author).to eq("au1")
+    expect(b.isbn).to eq("asd123")
+    expect(b.description).to eq("des1")
+    expect(b.checked_out).to eq(true)			
+  end
+
+  it "should not access a Check Out that doesn't exist" do
+    get "/check_outs/10"
+    has_status_404	
   end
 
 end

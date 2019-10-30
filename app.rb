@@ -261,6 +261,11 @@ post "/check_outs" do
 	ch.returned = false
 	ch.save
 
+	id_of_book = book_id
+	id_b = Book.get(id_of_book)
+	id_b.checked_out = true
+	id_b.save
+
 	halt 201, {message: "Check Out Entry Created"}.to_json
 end
 
