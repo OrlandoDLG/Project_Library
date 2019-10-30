@@ -438,27 +438,30 @@ describe "Check Out Testing" do
 #customers with check outs?
   it "should access a specific Customer with specific Book" do
     get "/check_outs/2/1"
-
     has_status_200
-    ch = Check_Out.get("3")
-    expect(ch.customer_id).to eq(2)
-    expect(ch.book_id).to eq(1)
-    expect(ch.due_date).to eq("later3")
-    expect(ch.checked_out_date).to eq("now3")
-    expect(ch.returned).to eq(false)
 
-    c = Customer.get(ch.customer_id)
+    c = Customer.get(2)
     expect(c.fname).to eq("cf2")
     expect(c.lname).to eq("cl2")
     expect(c.phone_number).to eq("5678")
 
-    b = Book.get(ch.book_id)
+    b = Book.get(1)
     expect(b.title).to eq("b1")
     expect(b.edition).to eq("first")
     expect(b.author).to eq("au1")
     expect(b.isbn).to eq("asd123")
     expect(b.description).to eq("des1")
-    expect(b.checked_out).to eq(true)			
+    expect(b.checked_out).to eq(true)	
+
+ #ASK if I need a way to access the Check Out ID, 
+ #May not be needed since customers are already 
+ #checked if they have the book ID
+    ch = Check_Out.get("3")
+    expect(ch.customer_id).to eq(2)
+    expect(ch.book_id).to eq(1)
+    expect(ch.due_date).to eq("later3")
+    expect(ch.checked_out_date).to eq("now3")
+    expect(ch.returned).to eq(false)		
   end
 
   it "should not access a Check Out that doesn't exist" do
