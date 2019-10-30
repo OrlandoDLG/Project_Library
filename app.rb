@@ -300,7 +300,7 @@ get "/check_outs/:id"  do
 	end
 end
 
-#Gets specific customer and specific book
+#Gets specific customer with specific book
 get "/check_outs/:id_c/:id_b"  do
 	id_c = params["id_c"]
 	id_c = Customer.get(id_c)

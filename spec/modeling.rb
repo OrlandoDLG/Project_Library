@@ -262,7 +262,7 @@ describe "Book Testing" do
     has_status_404	
   end
 end
-#TODO Left Off here
+
 #Customer TESTS//////////////////////////////////////////////////////////////
 describe Customer do
   it { should have_property           :id }
@@ -345,7 +345,6 @@ describe "Customer Testing" do
     delete "/customers/3"
     has_status_404	
   end
-
 
 end
 
@@ -466,6 +465,37 @@ describe "Check Out Testing" do
 
   it "should not access a Check Out that doesn't exist" do
     get "/check_outs/10"
+    has_status_404	
+  end
+
+  it "should allow updates to all fields of the Check Out Entry" do
+    patch "/check_outs/3?customer_id=2&book_id=1&due_date=laterch&checked_out_date=nowch&returned=1"
+    ch = Check_Out.get("3")
+    expect(ch.customer_id).to eq(2)
+    expect(ch.book_id).to eq(1)
+    expect(ch.due_date).to eq("laterch")
+    expect(ch.checked_out_date).to eq("nowch")
+    expect(ch.returned).to eq(true)
+  end
+
+  it "should allow updates to one field of the Check Out, and leave other fields as is" do
+    patch "/check_outs/3?returned=0"
+    ch = Check_Out.get("3")
+    expect(ch.customer_id).to eq(2)
+    expect(ch.book_id).to eq(1)
+    expect(ch.due_date).to eq("laterch")
+    expect(ch.checked_out_date).to eq("nowch")
+    expect(ch.returned).to eq(false)	
+    has_status_200	
+  end
+
+  it "should allow deleting a Check Out Entry" do
+    delete "/check_outs/3"
+    has_status_200	
+  end
+
+  it "should not allow duplicate deletions" do
+    delete "/check_outs/3"
     has_status_404	
   end
 
