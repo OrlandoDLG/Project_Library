@@ -69,6 +69,7 @@ get '/say_hello' do
     end
 end
 ```
+## Rspec Tests demonstrate the function calls
 
 Run the Tests with: bundle exec rspec spec/modeling.rb
 
