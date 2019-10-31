@@ -500,3 +500,25 @@ describe "Check Out Testing" do
   end
 
 end
+
+# Here are the high level commands that should be considered in order
+# to be onsidered functioning:
+
+# -As an Admin, I should be able to look up a book is checked in/out and if
+# checked out, see when it is expected to be returned
+
+# -As an Admin, I should be able to  checked in/out books for customers
+
+# -As an Admin, I should be able to view books a customer has checked out
+# and if they have been returned, if not when they are supposed to return it
+
+# -As an Admin, I should be able to view which books have not been turned in
+# and past due date
+
+# -As an Admin, I should be able to view the percentage of book checked out
+
+# -As an Admin, I should be able to add books to the inventory
+
+# -As an Admin, I should be able to view books checked out for a certain period
+
+# -As an Admin, I should be able to add customers to the system
