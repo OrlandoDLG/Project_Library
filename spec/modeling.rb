@@ -38,7 +38,8 @@ def is_valid_token?(encoded_token)
 	begin
 	JWT.decode encoded_token, "lasjdflajsdlfkjasldkfjalksdjflk", true, { algorithm: 'HS256' }
 	return true
-	rescue
+  rescue
+    print("invalid")
 	return false
 	end
 end
@@ -75,21 +76,21 @@ describe "When not signed in, API" do
   	expect(User.all.count).to eq(2)
   end
 #ASK why this is not working with null user
- # it "should get back valid token with valid sign-in" do
-  #	get "/api/login?username=p1@p1.com&password=p1"
-  #	has_status_200	
-  #	token = JSON.parse(last_response.body)["token"]
-  #	expect(is_valid_token?(token)).to eq(true)
-  #	token_user_id = get_user_id_from_token(token)
-  #	token_user = User.get(token_user_id) 
-  #	expect(token_user.id).to eq(@u.id)
-  #end
+ it "should get back valid token with valid sign-in" do
+  	get "/api/login?username=p1@p1.com&password=p1"
+    has_status_200	
+  	token = JSON.parse(last_response.body)["token"]
+  	expect(is_valid_token?(token)).to eq(true)
+  	token_user_id = get_user_id_from_token(token)
+  	token_user = User.get(token_user_id) 
+  	expect(token_user.id).to eq(@u.id)
+  end
 
   it "should give error with no token" do
     get "/api/login?username=p1@p1.com&password=p1"
     has_status_200	
     @token = JSON.parse(last_response.body)["token"]
-    header "AUTHORIZATION", "bearer #{@token}"
+    header "AUTHORIZATION", "Bearer #{@token}"
   end
 
   it "should have status 401 with invalid token on /api/token_check" do
