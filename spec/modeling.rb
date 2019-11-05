@@ -75,7 +75,7 @@ describe "When not signed in, API" do
   it "should have two users in test database" do 
   	expect(User.all.count).to eq(2)
   end
-#ASK why this is not working with null user
+
  it "should get back valid token with valid sign-in" do
   	get "/api/login?username=p1@p1.com&password=p1"
     has_status_200	
@@ -434,7 +434,6 @@ describe "Check Out Testing" do
     has_status_404	
   end
 
-#ASK for help here, is this the correct logic to manage 
 #customers with check outs?
   it "should access a specific Customer with specific Book" do
     get "/check_outs/2/1"
@@ -453,8 +452,7 @@ describe "Check Out Testing" do
     expect(b.description).to eq("des1")
     expect(b.checked_out).to eq(true)	
 
- #ASK if I need a way to access the Check Out ID, 
- #May not be needed since customers are already 
+ #The check below is not required 
  #checked if they have the book ID
     ch = Check_Out.get("3")
     expect(ch.customer_id).to eq(2)
@@ -507,19 +505,43 @@ end
 
 # -As an Admin, I should be able to look up a book is checked in/out and if
 # checked out, see when it is expected to be returned
+## yes, use get "/books" to get all the books along with status
+## get "/check_outs" to get the due dates of all the books that are checked out
+## may need some logic to adjust the view or join info
 
-# -As an Admin, I should be able to  checked in/out books for customers
+# -As an Admin, I should be able to check in/out books for customers
+## yes, post "/check_outs?customer_id=2&book_id=1&due_date=later3&checked_out_date=now3"
+## will create an initial check out
+## yes, patch "/check_outs/3?returned=0" will update the entry if needed
 
 # -As an Admin, I should be able to view books a customer has checked out
 # and if they have been returned, if not when they are supposed to return it
+##  ASK, becuse the checkout object has the customer
+##  SO logic would be to look up the customer
+##  get the customer ID
+##  THEN check where check out has the same customer ID??
+##  
+
 
 # -As an Admin, I should be able to view which books have not been turned in
 # and past due date
+##  yes, get "/check_outs/not_returned"
+##  "should access all checked out books that are not returned"
+##  the same object has the due date
 
 # -As an Admin, I should be able to view the percentage of book checked out
+##  Use ( get "/check_outs/not_returned", then get object.all.count) / Book.all.count
 
 # -As an Admin, I should be able to add books to the inventory
+##  yes, post "/books?title=b3&edition=first&author=au3&isbn=asdkhj&description=trythree"
+##  it "should allow creating a new book"
 
 # -As an Admin, I should be able to view books checked out for a certain period
+##  yes, get "/check_outs/not_returned"
+##  "should access all checked out books that are not returned"
+##  the same object has the due date and use logic to check specific
+##  dates
 
 # -As an Admin, I should be able to add customers to the system
+##  yes, post "/customers?fname=cf3&lname=cl3&phone_number=0987"
+##  it "should allow creating a new Customer" do  
